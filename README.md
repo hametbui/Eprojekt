@@ -22,6 +22,5 @@ Project title: Carrio Motor Cars website
 ============================
 =======
 Our site is live at https://hametbui.github.io/Eprojekt/tab/Carrio_index.html
-https://hametbui.github.io/Eprojekt/tab/Carrio_index.html
 
 
