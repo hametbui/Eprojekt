@@ -1,0 +1,3 @@
+/*! @volkswagen-onehub/audi-feature-hub-integrator-csr 5.6.0 */
+(window.webpackJsonpaudi_feature_hub_integrator=window.webpackJsonpaudi_feature_hub_integrator||[]).push([[5],{430:function(n,e,r){"use strict";r.r(e);var t=r(427);r.d(e,"onegraphClient",(function(){return t}))}}]);
+//# sourceMappingURL=csr-volkswagen-onehub-onegraph-client-d85a851c209dc177e059.js.map

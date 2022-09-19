@@ -1,0 +1,6 @@
+BrightTag.site('d5w1X6r',function(s){
+s.domready(function(){
+s.tag('\x3c!-- Flashtalking Container Tag: Audi (8444) | All pages_Tier 1 (95866) | Action_Tier (9969) | Expected URL: --\x3e\n \x3cscript type\x3d\x22text/javascript\x22\x3e\n var ftRandom \x3d Math.random()*1000000;\n document.write(\x27\x3ciframe style\x3d\x22position:absolute; visibility:hidden; width:1px; height:1px;\x22 src\x3d\x22https://servedby.flashtalking.com/container/8444;95866;9969;iframe/?spotName\x3dAll_pages_Tier_1\x26U18\x3d'+s.data('ixis | adobe marketing cloud visitor id')+'\x26cachebuster\x3d\x27+ftRandom+\x27\x22\x3e\x3c/iframe\x3e\x27);\n \x3c/script\x3e',{tagId:7444192});
+s.tag('\x3c!-- IXIS | PROD | Accenture | LiveRamp | Universal Tag --\x3e\n\x3ciframe name\x3d\x22_rlcdn\x22 width\x3d0 height\x3d0 frameborder\x3d0 src\x3d\x22https://di.rlcdn.com/710844.html?pdata\x3damcid%3D'+s.data('ixis | adobe marketing cloud visitor id')+'\x22\x3e\x3c/iframe\x3e',{tagId:7491764});
+});
+});

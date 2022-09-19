@@ -1,0 +1,44 @@
+<form action="" id="form">
+    <div class="col mb-3">
+
+
+
+
+        <div class="form-row">
+            <div class="custom-control custom-checkbox mb-3">
+                <input type="checkbox" class="custom-control-input" id="customCheck1" value="">
+                <label class="custom-control-label" for="customCheck1">If selected, Dealer reserves the right to
+                    share
+                    non-public personal information with outside companies and related organizations, such as market
+                    research firms, financial providers, and other companies that may provide you with materials
+                    about
+                    other products or services.
+                </label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                <label class="form-check-label" for="defaultCheck1">
+                    If selected, Dealer may not share my non-public personal information with outside companies and
+                    related organizations, except as provided in the Privacy Policy
+                </label>
+            </div>
+
+            <div class="col mb-3">
+                <input class="form-control" placeholder="E-Signature Type Your Name Here:" type="text"
+                    name="official_identification">
+            </div>
+        </div>
+
+        <div class="modal-footer">
+
+            <input type="submit" name="commit" id="sub" value="submit" class="btn btn-primary"">
+
+</form>
+<script>
+     document.getElementById("form").onsubmit = function () {
+
+alert("Succes")
+
+}
+</script>

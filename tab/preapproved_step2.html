@@ -1,0 +1,102 @@
+<div class="container">
+  <form id="form" method="post">
+    <div class="modal-header">
+      <h5 class="modal-title">Registrar Nuevo Cliente</h5>
+      <button type="button" class="close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+
+
+      <div class="form-row">
+        <div class="col-5 mb-3">
+          <input class="form-control" placeholder="Birthday" type="date" name="birthday">
+        </div>
+
+        <div class="col-7 mb-3 d-flex align-items-center">
+          <div class="custom-control custom-radio custom-control-inline">
+            <input class="custom-control-input" type="radio" value="" name="gender" id="male">
+            <label class="custom-control-label" for="male">Male</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input class="custom-control-input" type="radio" value="" name="gender" id="female">
+            <label class="custom-control-label" for="female">Female</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input class="custom-control-input" type="radio" value="" name="gender" id="other">
+            <label class="custom-control-label" for="other">Other</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col mb-3">
+          <input class="form-control" placeholder="Street 1" type="text" name="street_1">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col mb-3">
+          <input class="form-control" placeholder="Street 2" type="text" name="street_2">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col mb-3">
+          <input class="form-control" placeholder="City" type="text" name="city">
+        </div>
+
+        <div class="col mb-3">
+          <input class="form-control" placeholder="State" type="text" name="state">
+        </div>
+
+        <div class="col mb-3">
+          <input class="form-control" placeholder="ZipCode" type="text" name="zip_code">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col mb-3">
+          <input class="form-control" placeholder="Phone number" id="phone" type="text" name="phone_number">
+        </div>
+
+        <div class="col mb-3">
+          <input class="form-control" placeholder="Official ID type" type="text" name="official_identification">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col">
+          <input class="form-control" placeholder="Rent/Mortgage Amount per month:" type="text"
+            name="identification_number">
+        </div>
+
+        <div class="col mb-3">
+          <input class="form-control" placeholder="Joint owner name" type="text" name="joint_owner_name">
+        </div>
+      </div>
+
+
+    </div>
+   
+
+      <input type="submit" name="commit" id="" value="Submit" class="btn btn-primary">
+   
+  </form>
+</div>
+<script>
+  document.getElementById("form").onsubmit = function () {
+
+   
+    let a = /([0-9]+)/;
+    let phone = document.getElementById("phone").value.trim().toLowerCase();
+    if (a.test(phone) == false) {
+      alert("Phone Number must be digit !!!");
+      document.getElementById("phone").focus();
+      return false;
+    }
+    alert("Next step")
+
+  }
+</script>

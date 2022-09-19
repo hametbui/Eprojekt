@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Carrio</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+
+  <link rel="stylesheet" href="../jquery-3.6.0.min.js">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.shopify.com/s/files/1/2979/3338/files/UGC-style.css" />
+
+  <script type="text/javascript" src="https://cdn.shopify.com/s/files/1/2979/3338/files/UGC_-_new_v.3.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
+    integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+  @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css');
+
+*,
+*:after,
+*:before {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.clearfix:before,
+.clearfix:after {
+	content: " ";
+	display: table;
+}
+
+.clearfix:after {
+	clear: both;
+}
+
+body {
+	font-family: sans-serif;
+	background: #f6f9fa;
+}
+
+h1 {
+	color: #ccc;
+	text-align: center;
+}
+
+a {
+  color: #ccc;
+  text-decoration: none;
+  outline: none;
+}
+
+/*Fun begins*/
+.tab_container {
+	width: 90%;
+	margin: 0 auto;
+	padding-top: 70px;
+	position: relative;
+}
+
+input, section {
+  clear: both;
+  padding-top: 10px;
+  display: none;
+}
+
+label {
+  font-weight: 700;
+  font-size: 18px;
+  display: block;
+  float: left;
+  width: 20%;
+  padding: 1.5em;
+  color: #757575;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  background: #f0f0f0;
+}
+
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5 {
+  display: block;
+  padding: 20px;
+  background: #fff;
+  color: #999;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.tab_container .tab-content p,
+.tab_container .tab-content h3 {
+  -webkit-animation: fadeInScale 0.7s ease-in-out;
+  -moz-animation: fadeInScale 0.7s ease-in-out;
+  animation: fadeInScale 0.7s ease-in-out;
+}
+.tab_container .tab-content h3  {
+  text-align: center;
+}
+
+.tab_container [id^="tab"]:checked + label {
+  background: #fff;
+  box-shadow: inset 0 3px #0CE;
+}
+
+.tab_container [id^="tab"]:checked + label .fa {
+  color: #0CE;
+}
+
+label .fa {
+  font-size: 1.3em;
+  margin: 0 0.4em 0 0;
+}
+
+/*Media query*/
+@media only screen and (max-width: 900px) {
+  label span {
+    display: none;
+  }
+  
+  .tab_container {
+    width: 98%;
+  }
+}
+
+/*Content Animation*/
+@keyframes fadeInScale {
+  0% {
+  	transform: scale(0.9);
+  	opacity: 0;
+  }
+  
+  100% {
+  	transform: scale(1);
+  	opacity: 1;
+  }
+}
+
+.no_wrap {
+  text-align:center;
+  color: #0ce;
+}
+.link {
+  text-align:center;
+}
+</style>
+
+
+</head>
+
+<body>
+  
+  <h1>Responsive CSS Tabs</h1>
+  <div class="tab_container">
+    <input id="tab1" type="radio" name="tabs" checked>
+    <label for="tab1"><i class="fa fa-code"></i><span>Code</span></label>
+
+    <input id="tab2" type="radio" name="tabs">
+    <label for="tab2"><i class="fa fa-pencil-square-o"></i><span>About</span></label>
+
+    <input id="tab3" type="radio" name="tabs">
+    <label for="tab3"><i class="fa fa-bar-chart-o"></i><span>Services</span></label>
+
+    <input id="tab4" type="radio" name="tabs">
+    <label for="tab4"><i class="fa fa-folder-open-o"></i><span>Portfolio</span></label>
+
+    <input id="tab5" type="radio" name="tabs">
+    <label for="tab5"><i class="fa fa-envelope-o"></i><span>Contact</span></label>
+
+    <section id="content1" class="tab-content">
+      <div >
+        <div class="swiper mySwiper row">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide col-md-4">
+              <div class="blog-card blog-card-blog">
+                <div class="blog-card-image">
+                  <a href="#"> <img class="img" src="../bmwm2/grille.jpg"> </a>
+                  <div class="ripple-cont"></div>
+                </div>
+                <div class="blog-table">
+  
+                  <h6 class="ds2-font-l ds2-no-uppercase ds2-showroom-multicontent__item-headline ">BMW kidney grille in mesh design. </h6>
+                  <p  data-text-limit="320">The BMW kidney grille in mesh design is completely finished in Cerium Grey and has an elaborately designed grid inside. This grid structure, inspired by racing, lends depth and value to the front and sets a high-quality and dynamic accent in the details.</p>
+                  <div class="ftr">
+                    <div class="author">
+                      <span></span> </a>
+                    </div>
+                    <div class="stats"> <i></i> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+  
+            <div class="swiper-slide col-md-4">
+              <div class="blog-card blog-card-blog">
+                <div class="blog-card-image">
+                  <a href="#"> <img class="img" src="../bmwm2/door.jpg"> </a>
+                  <div class="ripple-cont"></div>
+                </div>
+                <div class="blog-table">
+  
+                  <h6 class="ds2-font-l ds2-no-uppercase ds2-showroom-multicontent__item-headline "> Elegant frameless doors.
+                  </h6>
+                  <p >The elegant frameless doors&nbsp;emphasise the elegant lines of the vehicle and underline the sporty character of the vehicle.</p>
+                  <div class="ftr">
+                    <div class="author">
+                      <span></span> </a>
+                    </div>
+                    <div class="stats"></i> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <div class="swiper-slide col-md-4">
+              <div class="blog-card blog-card-blog">
+                <div class="blog-card-image">
+                  <a href="#"> <img class="img" src="../bmwm2/trims.jpg"> </a>
+                  <div class="ripple-cont"></div>
+                </div>
+                <div class="blog-table">
+  
+                  <h6 class="ds2-font-l ds2-no-uppercase ds2-showroom-multicontent__item-headline ">Tailpipe trims. </h6>
+                  <p >The tailpipe trims make a visual statement with a 90-mm diameter and make the vehicle even more sporty.</p>
+                  <div class="ftr">
+                    <div class="author">
+                      <span></span> </a>
+                    </div>
+                    <div class="stats"> <i></i> </div>
+                  </div>
+                </div>
+              </div>
+  
+            </div>
+            <div class="swiper-slide col-md-4" id="2">
+              <div class="blog-card blog-card-blog">
+                <div class="blog-card-image">
+                  <a href="#"> <img class="img" src="../bmwm2/frontseat.jpg"> </a>
+                  <div class="ripple-cont"></div>
+                </div>
+                <div class="blog-table">
+  
+                  <h6 class="ds2-font-l ds2-no-uppercase ds2-showroom-multicontent__item-headline "> Sport seats for driver and front passenger. </h6>
+                  <p  >The Sport seats for driver and front passenger are characterised by seat and backrest bolsters that are larger than those on the standard seats and, together with adjustable thigh support, for excellent ergonomics and better lateral support during fast cornering. In addition to the seat depth (mechanical), the backrest width (electric) can also be adjusted on the driver's seat.
+                  </p>
+                  <div class="ftr">
+                    <div class="author">
+                      <span></span> </a>
+                    </div>
+                    <div class="stats"></i> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide col-md-4">
+              <div class="blog-card blog-card-blog">
+                <div class="blog-card-image">
+                  <a href="#"> <img class="img" src="../bmwm2/br.jpg"> </a>
+                  <div class="ripple-cont"></div>
+                </div>
+                <div class="blog-table">
+  
+                  <h6 class="ds2-font-l ds2-no-uppercase ds2-showroom-multicontent__item-headline "> Interior trim finishers 'Illuminated Brooklyn'. </h6>
+                  <p>The interior trim finishers 'Illuminated Brooklyn' with 'Triangle' accent on the dashboard and door trim lend the interior a progressive ambience with a high sense of value. The shimmering pattern of the discreetly backlit finishers creates both an attractive as well as a pleasant atmosphere in the vehicle.</p>
+                  <div class="ftr">
+                    <div class="author">
+                      <span></span> </a>
+                    </div>
+                    <div class="stats"></i> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-slide col-md-4">
+              <div class="blog-card blog-card-blog">
+                <div class="blog-card-image">
+                  <a href="#"> <img class="img" src="../bmwm2/glass.jpg"> </a>
+                  <div class="ripple-cont"></div>
+                </div>
+                <div class="blog-table">
+  
+                  <h6 class="ds2-font-l ds2-no-uppercase ds2-showroom-multicontent__item-headline "> Panoramic glass sunroof. </h6>
+                  <p>
+                  When open, the Panorama glass roof provides a great deal of fresh air. Closed, it creates a bright, light-flooded atmosphere in the interior. It opens and closes completely automatically at the push of a button or with the vehicle key and is equipped with slide and lift functions, a roller sunblind and wind deflector.</p>
+                  <div class="ftr">
+                    <div class="author">
+                      <span></span> </a>
+                    </div>
+                    <div class="stats"></i> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          <div class="swiper-button-next" style="color:white ;" ></div>
+        <div class=" swiper-button-prev" style="color:white ;"></div>
+          <div class="swiper-pagination"></div>
+        </div>
+  
+      </div>
+    </section>
+
+    <section id="content2" class="tab-content">
+      <div class="">
+        <div class="swiper mySwiper row">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide col-md-4">
+              <div class="blog-card blog-card-blog">
+                <div class="blog-card-image">
+                  <a href="#"> <img class="img" src="../bmwm2/ster.jpg"> </a>
+                  <div class="ripple-cont"></div>
+                </div>
+                <div class="blog-table">
+  
+                  <h3 class="ds2-font-l ds2-no-uppercase ds2-showroom-multicontent__item-headline ">M Sport Steering </h3>
+                  <p >The M Sports steering with Servotronic creates a direct and agile steering response and reduces steering effort. Your vehicle can be directed more precisely, offering highly athletic handling characteristics, particularly on winding roads.</p>
+                  <div class="ftr">
+                    <div class="author">
+                      <span></span> </a>
+                    </div>
+                    <div class="stats"> <i></i> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+  
+            <div class="swiper-slide col-md-4">
+              <div class="blog-card blog-card-blog">
+                <div class="blog-card-image">
+                  <a href="#"> <img class="img" src="../bmwm2/8.jpg"> </a>
+                  <div class="ripple-cont"></div>
+                </div>
+                <div class="blog-table">
+  
+                  <h3 class="ds2-font-l ds2-no-uppercase ds2-showroom-multicontent__item-headline "> 8-speed Steptronic Sport transmission.
+                  </h3>
+                  <p >The 8-speed Steptronic Sport transmission offers incredibly sporty gear changes. Whether automatic or manual using gearshift paddles or gear lever – for comfortable coasting or incredibly dynamic driving. In SPORT mode and with the gear lever in the left-hand S/M position, the gear shifts are configured for the best performance.</p>
+                  <div class="ftr">
+                    <div class="author">
+                      <span></span> </a>
+                    </div>
+                    <div class="stats"></i> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <div class="swiper-slide col-md-4">
+              <div class="blog-card blog-card-blog">
+                <div class="blog-card-image">
+                  <a href="#"> <img class="img" src="../bmwm2/dri.jpg"> </a>
+                  <div class="ripple-cont"></div>
+                </div>
+                <div class="blog-table">
+  
+                  <h3 class="ds2-font-l ds2-no-uppercase ds2-showroom-multicontent__item-headline "> BMW xDrive. </h3>
+                  <p>The intelligent BMW xDrive all-wheel drive system smoothly and variably distributes drive power to the front and rear wheels for maximum traction, driving dynamics and safety in every driving situation. For even better agility, the electronically controlled power distribution for instance counterbalances oversteer or understeer on bends.</p>
+                  <div class="ftr">
+                    <div class="author">
+                      <span></span> </a>
+                    </div>
+                    <div class="stats"> <i></i> </div>
+                  </div>
+                </div>
+              </div>
+  
+            </div>
+            <div class="swiper-slide col-md-4" id="2">
+              <div class="blog-card blog-card-blog">
+                <div class="blog-card-image">
+                  <a href="#"> <img class="img" src="../bmwm2/sup.jpg"> </a>
+                  <div class="ripple-cont"></div>
+                </div>
+                <div class="blog-table">
+  
+                  <h3 class="ds2-font-l ds2-no-uppercase ds2-showroom-multicontent__item-headline ">M Sport suspension. </h3>
+                  <p>M Sport suspension lowers the vehicle by approximately ten millimetres. It also features shorter suspension springs and tighter damper settings, as well as harder stabilisers. Combined together, they result in an even more direct suspension design, which enables a distinctly sporty driving style.
+                  </p>
+                  <div class="ftr">
+                    <div class="author">
+                      <span></span> </a>
+                    </div>
+                    <div class="stats"></i> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="swiper-button-next" style="color: white;"></div>
+          <div class="swiper-button-prev " style="color: white;"></div>
+          <div class="swiper-pagination"></div>
+        </div>
+  
+      </div>
+    </section>
+
+    <section id="content3" class="tab-content">
+      <h3>Headline 3</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+          cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+          proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+          cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+          proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </section>
+
+    <section id="content4" class="tab-content">
+      <h3>Headline 4</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+          cillum dolore eu fugiat nulla pariatur.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat.</p>
+    </section>
+
+    <section id="content5" class="tab-content">
+      <h3>Headline 5</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+          cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+          proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </section>
+  </div>
+
+<p class="no_wrap">
+And Of-course this paragrapgh with not wrap Tab
+</p>
+
+<p class="link">
+Just in case you want to go through the tutorial follow this link: <a href="http://www.sevensignature.com/blog/code/responsive-pure-css-tabs/">Responsive Pure CSS Tabs</a>
+</p>
+
+
+
+  <script>
+    (function ($) {
+      "use strict";
+
+      $(function () {
+        var header = $(".start-style");
+        $(window).scroll(function () {
+          var scroll = $(window).scrollTop();
+
+          if (scroll >= 10) {
+            header.removeClass('start-style').addClass("scroll-on");
+          } else {
+            header.removeClass("scroll-on").addClass('start-style');
+          }
+        });
+      });
+
+
+
+      $(document).ready(function () {
+        $('body.hero-anime').removeClass('hero-anime');
+      });
+
+
+
+      $('body').on('mouseenter mouseleave', '.nav-item', function (e) {
+        if ($(window).width() > 750) {
+          var _d = $(e.target).closest('.nav-item'); _d.addClass('show');
+          setTimeout(function () {
+            _d[_d.is(':hover') ? 'addClass' : 'removeClass']('show');
+          }, 1);
+        }
+      });
+
+
+
+      $("#switch").on('click', function () {
+        if ($("body").hasClass("dark")) {
+          $("body").removeClass("dark");
+          $("#switch").removeClass("switched");
+        }
+        else {
+          $("body").addClass("dark");
+          $("#switch").addClass("switched");
+        }
+      });
+
+    })(jQuery);
+    $('section.awSlider .carousel').carousel({
+      pause: "hover",
+      interval: 2000
+    });
+
+    var startImage = $('section.awSlider .item.active > img').attr('src');
+    $('section.awSlider').append('<img src="' + startImage + '">');
+
+    $('section.awSlider .carousel').on('slid.bs.carousel', function () {
+      var bscn = $(this).find('.item.active > img').attr('src');
+      $('section.awSlider > img').attr('src', bscn);
+    });
+
+
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Initialize Swiper -->
+
+
+
+
+
+  </script>
+  <script>
+    var counterContainer = document.querySelector(".website-counter");
+    var resetButton = document.querySelector("#reset");
+    var visitCount = localStorage.getItem("page_view");
+
+    // Check if page_view entry is present
+    if (visitCount) {
+      visitCount = Number(visitCount) + 1;
+      localStorage.setItem("page_view", visitCount);
+    } else {
+      visitCount = 1;
+      localStorage.setItem("page_view", 1);
+    }
+    counterContainer.innerHTML = visitCount;
+
+
+  </script>
+  <script>
+    $(document).ready(function () {
+      $(".productCard").each(function (index, productCard) {
+        var colorsContainer = $(productCard).find(".colorsContainer");
+        colorsContainer.find(".color").each(function (i, color) {
+          $(color).on("click", function () {
+            colorsContainer.find(".color").removeClass("active");
+            $(color).addClass("active");
+            $(productCard)
+              .removeClass("red green blue black")
+              .addClass($(color).attr("data-color"));
+          });
+        });
+      });
+    });
+
+  </script>
+  <script>
+    $(document).ready(function () {
+      $("img").click(function () {
+        var t = $(this).attr("src");
+        $(".modal-body").html("<img src='" + t + "' class='modal-img'>");
+        $("#myModal").modal();
+      });
+
+      $("video").click(function () {
+        var v = $("video > source");
+        var t = v.attr("src");
+        $(".modal-body").html("<video class='model-vid' controls><source src='" + t + "' type='video/mp4'></source></video>");
+        $("#myModal").modal();
+      });
+    });//EOF Document.ready
+
+  </script>
+
+
+  <script>
+    var main = {
+
+      initialize: function () {
+        main.initSlickSlider();
+      },
+      //---------------------------------------------------------------------------------------------
+      // Slick Slider
+      //---------------------------------------------------------------------------------------------
+      initSlickSlider: function () {
+        $('.slick__slides-container').slick({
+          appendArrows: $('.slick__controls'),
+          arrows: false,
+          dots: false,
+          infinite: true,
+          centerMode: true,
+          variableWidth: true,
+          appendDots: $('.slick__slides-container'),
+          responsive: [
+            {
+              breakpoint: 768,
+              settings: {
+                arrows: true,
+                dots: false,
+                centerMode: false,
+                variableWidth: false,
+                prevArrow: ('<span></span>'),
+                nextArrow: ('<span></span>')
+              }
+            }
+          ]
+        });
+        // Move to the next or previous slide on next or previous slide click
+        // Credit: 'ssundheim'  on github
+        $('.slick-slider').on('click', '.slick-slide', function (e) {
+          e.stopPropagation();
+          var index = $(this).data("slick-index");
+          if ($('.slick-slider').slick('slickCurrentSlide') !== index) {
+            $('.slick-slider').slick('slickGoTo', index);
+          }
+        });
+      }
+      //---------------------------------------------------------------------------------------------
+      // The next thing and add a comma to the bracket above ^
+      //---------------------------------------------------------------------------------------------
+    };
+
+    $(document).ready(main.initialize);
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Initialize Swiper -->
+  <script>
+    var swiper = new Swiper(".mySwiper", {
+      slidesPerView: 3,
+      spaceBetween: 30,
+
+      loop: true,
+      loopFillGroupWithBlank: true,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      breakpoints: {
+        0: {
+          slidesPerView: 1,
+        },
+        520: {
+          slidesPerView: 2,
+        },
+        950: {
+          slidesPerView: 3,
+        },
+      },
+    });
+
+
+
+
+
+  </script>
+  <script>
+    $(document).ready(function () {
+
+
+     
+
+      const swiper = new Swiper('.image-slider', {
+        // Optional parameters
+        slidesPerView: 3,
+        spaceBetween: 30,
+        direction: 'horizontal',
+        centeredSlides: true,
+        loop: true,
+        loopedSLides: 3,
+        simulateTouch: true,
+        grabCursor: true,
+        speed: 800,
+        pagination: {
+          el: '.swiper-pagination',
+          type: 'progressbar'
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        autoplay: {
+          delay: 1000,
+        },
+        breakpoints: {
+        0: {
+          slidesPerView: 1,
+        },
+        520: {
+          slidesPerView: 1,
+        },
+        950: {
+          slidesPerView: 3,
+        },
+      },
+      });
+
+
+
+      
+ });
+  </script>
+
+
+
+</body>
+
+</html>

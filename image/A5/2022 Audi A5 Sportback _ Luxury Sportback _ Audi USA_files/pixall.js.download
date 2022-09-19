@@ -1,0 +1,801 @@
+(function (jQuery) {
+
+  /*
+   * non side-effecting merge/copy with the rightmost winning
+   */
+  var merge = function() {
+    var args = Array.prototype.slice.call(arguments);
+    var destination = {};
+    for(var i = 0, len = args.length; i < len; i++){
+      var source = args[i];
+      for(var prop in source){
+        destination[prop] = source[prop];
+      }
+    }
+    return destination;
+  };
+
+  // constants
+
+  var PATH_ATTRIBUTES = {
+    trtPageLoadPath: '//pixall.esm1.net/v2/iframe',
+    pixallPageLoadPath: '//pixall.esm1.net/v2/pageload',
+    pixallEventPath: '//pixall.esm1.net/v2/event',
+    attributioniFramePath: '//pixall.esm1.net/v2/attribution/iframe'
+  };
+
+  var PAGE_ATTRIBUTES = {
+    program: 'p',
+    dealerCode: 'd',
+    wspCode: 'w',
+    visitorId: 'v',
+    domainOverride: 'do',
+    pageType: 'pt'
+  };
+
+  var DEFAULT_PAGE_ATTRIBUTES = {
+    program: 'DealerDotCom'
+  };
+
+  var EVENT_DESCRIPTORS = {
+    eventSource: 'es',
+    eventType: 'et'
+  };
+
+  var VEHICLE_FIELDS = {
+    // vehicle related
+    vehicleType: 'vt',
+    year: 'y',
+    make: 'm',
+    model: 'o',
+    bodyStyle: 'b',
+    stockNumber: 's',
+    vin: 'n',
+    price: 'pr',
+    vehicleId: 'i',
+    listingType: 'lt',
+    listingCode: 'lc',
+    fuelEconomy: 'fe',
+    odometer: 'od',
+    chromeStyleId: 'cs',
+    exteriorColor: 'ec',
+    rank: 'r'
+  };
+
+  var SEARCH_FACET_ARRAY_FIELDS = {
+    searchFacetVehicleTypes: 'svt',
+    searchFacetBodyStyles: 'sb',
+    searchFacetFuelTypes: 'sf',
+    searchFacetInteriorColors: 'sic',
+    searchFacetExteriorColors: 'sec',
+  }
+
+  // Dynamically create array of search facet query param keys for array types.
+  var SEARCH_FACET_ARRAY_VALUES = [];
+  for (var i in SEARCH_FACET_ARRAY_FIELDS) {
+    SEARCH_FACET_ARRAY_VALUES.push(SEARCH_FACET_ARRAY_FIELDS[i]);
+  }
+
+  var OTHER_EVENT_FIELDS = {
+    protectionPlan: 'pp',
+    leadType: 'lp',
+    leadContext: 'lx',
+    socialChannel: 'sc',
+    mediaType: 'mt',
+    applicationType: 'at',
+    calculatorType: 'ct',
+    feature: 'f',
+    contentId: 'ci',
+    label: 'l',
+    incentiveType: 'it',
+    omnitureSuperSection: 'os',
+    omnitureSectionName: 'on',
+    omnitureDetailedPageName: 'op',
+    vehicles: 'vs',
+    pageId: 'pi',
+    pageInstanceId: 'ii',
+    latitude: 'lat',
+    longitude: 'lon',
+    zipCode: 'zip',
+    // search facets
+    searchFacetDistance: 'sd',
+    searchFacetMinPrice: 'spn',
+    searchFacetMaxPrice: 'spx',
+    searchFacetMinYear: 'syn',
+    searchFacetMaxYear: 'syx',
+    searchFacetMake: 'sm',
+    searchFacetModel: 'so',
+    searchFacetMileage: 'smi',
+    searchFacetMpgCity: 'sgc',
+    searchFacetMpgHighway: 'sgh',
+    searchFacetMpgeCity: 'sgec',
+    searchFacetMpgeHighway: 'sgeh',
+    searchFacetZipCode: 'szp',
+    // assist related
+    assistChannel: 'ac',
+    assistProduct: 'ap',
+    assistSubchannel: 'as',
+    goal: 'g',
+    // legacy
+    formEventId: 'fi',
+    category: 'cat',
+    description: 'desc',
+    userType: 'ut',
+    userAccountId: 'ai',
+    crossAccountId: 'ca',
+    priceAlerts: 'pa',
+    pageType: PAGE_ATTRIBUTES.pageType
+  };
+
+  var EVENT_FIELDS = merge(VEHICLE_FIELDS, OTHER_EVENT_FIELDS, SEARCH_FACET_ARRAY_FIELDS);
+
+  var UNKNOWN_META_DATA = {
+    dealerCode: 'unknown',
+    wspCode: 'unknown',
+    pageType: 'unknown'
+  };
+
+  // listen for events posted from iFrames
+
+  var pixallEventHandler = function (event) {
+
+    var filterFields = function (fields) {
+        var result = {};
+        if (typeof fields === 'object') {
+          for (var key in fields) {
+            if (EVENT_FIELDS[key] && typeof fields[key] === 'string') {
+              result[key] = fields[key];
+            }
+          }
+        }
+        return result;
+    };
+
+    var data = {};
+
+    if (event && typeof event.data == 'string') {
+      try {
+          data = JSON.parse(event.data);
+      } catch (e) {}
+    }
+
+    if (data.pxamMessageType === 'pxamConversion' &&
+      typeof data.formEventId === 'string' &&
+      typeof data.formType === 'string') {
+
+      _pxam.push(merge({
+        type: 'event',
+        eventType: 'formSubmission',
+        formType: data.formType,
+        formEventId: data.formEventId
+      },  filterFields(data.eventFields)));
+
+    } else if (data.pxamMessageType === 'pxamContentEvent' &&
+      typeof data.eventType === 'string' &&
+      (data.eventType === 'ajaxPageView'  || typeof data.eventSource === 'string')) {
+
+      _pxam.push(merge({
+        type: 'event',
+        eventType: data.eventType,
+        eventSource: data.eventSource
+      }, filterFields(data.eventFields)));
+
+    }
+  };
+
+  if (window.addEventListener){
+    window.addEventListener('message', pixallEventHandler, false);
+  }
+  else if (window.attachEvent){ /* IE8 */
+    window.attachEvent('onmessage', pixallEventHandler);
+  }
+
+  // default methods overwritten by unit tests
+
+  var defaultiFrameRenderer = function (url) {
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('src', url);
+    iframe.style.width = 0 + 'px';
+    iframe.style.height = 0 + 'px';
+    iframe.setAttribute('frameBorder', '0');
+
+    var scripts = document.getElementsByTagName('script');
+    scripts[0].parentNode.insertBefore(iframe, scripts[0]);
+  };
+
+  var defaultScriptRenderer = function(url){
+    var script = document.createElement('script');
+    script.src = url;
+    var entry = document.getElementsByTagName('script')[0];
+    entry.parentNode.insertBefore(script, entry);
+  };
+
+  var defaultPoller = function (callback) {
+    (function endlessTimeout() {
+      callback();
+      setTimeout(endlessTimeout, 100);
+    })();
+  };
+
+  var defaultImageRenderer = function (url) {
+    var image = document.createElement('img');
+    image.setAttribute('src', url);
+  };
+
+  var defaultDelayedPageLoad = function (callback, delay) {
+    setTimeout(callback, delay || 1000);
+  };
+
+  // visitor id / cookie logic
+
+  var setCookie = function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+    if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) {
+      return false;
+    }
+    var sExpires = "";
+    if (vEnd) {
+      switch (vEnd.constructor) {
+      case Number:
+        sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; max-age=" + vEnd;
+        break;
+      case String:
+        sExpires = "; expires=" + vEnd;
+        break;
+      case Date:
+        sExpires = "; expires=" + vEnd.toGMTString();
+        break;
+      }
+    }
+    document.cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+    return true;
+  };
+
+  var getCookie = function (key) {
+    return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(key).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
+  };
+
+  var dateForDaysInFuture = function (days) {
+    var now = new Date();
+    return new Date(now.setDate(now.getDate() + days));
+  };
+
+  var getVisitorId = function () {
+    var generateVisitorId = function () {
+      var id = '';
+      for (var i = 0; i < 24; i++) {
+        // random int between - and 51
+        var random = ((Math.random() * 52) | 0);
+        if (random > 35) {
+          id += (random - 26).toString(36).toUpperCase();
+        } else {
+          id += random.toString(36);
+        }
+      }
+      return id;
+    };
+
+    var id = getCookie('pxa_id');
+    if (!id) {
+      // generate visitor id
+      id = generateVisitorId();
+    }
+    // set cookie either way so it only expires after inactivity
+    setCookie('pxa_id', id, dateForDaysInFuture(365), '/', null, false);
+
+    return id;
+  };
+
+  // external invocation of js phone swapping for call tracking
+  var invokePhoneSwap = function() {
+    try {
+      window.CallTrack.PhoneSwap.init();
+    } catch (err) {}
+  };
+
+  // helper functions
+
+  var getPathsAsV2 = function (data) {
+    var result = {};
+    for (var key in PATH_ATTRIBUTES) {
+      var path = data[key];
+      if (path !== undefined) {
+        if (typeof path === 'string' && path.indexOf("esm1.net/v2/") === -1) {
+          path = path.replace("esm1.net/", "esm1.net/v2/");
+        }
+        result[key] = path;
+      }
+    }
+    return result;
+  };
+
+  var getQueryString = function (data) {
+    var result = '';
+    for (var name in data) {
+      if (data[name] !== undefined) {
+        if (result) {
+          result += '&';
+        }
+        // For those cases when we want to pass multiple values for a single param (ex. some search facets).
+        if (SEARCH_FACET_ARRAY_VALUES.indexOf(name) !== -1 && Array.isArray(data[name])) {
+          for (var i = 0; i < data[name].length; ++i) {
+            if (data[name][i] !== undefined) {
+              result += (i > 0 ? '&' : '') + name + '=' + window.encodeURIComponent(data[name][i]);
+            }
+          }
+        } else {
+          result += name + '=' + window.encodeURIComponent(data[name]);
+        }
+      }
+    }
+    return result;
+  };
+
+  var filterKeys = function (source,keys) {
+    var result = {};
+    for (var key in keys) {
+      if (source[key] !== undefined) {
+        result[key] = source[key];
+      }
+    }
+    return result;
+  };
+
+  // Takes data to map to keys using single mapping
+  var mapKeys = function (data) {
+    var mappings = Array.prototype.slice.call(arguments,1);
+    var mapping = merge.apply(null,mappings);
+    var result = {};
+    for (var key in data) {
+      if (mapping[key] !== undefined) {
+        result[mapping[key]] = data[key];
+      }
+    }
+    return result;
+  };
+
+  // encodes as key-value.key-value...!key-value.key-value...!...
+  var encodeVehicles = function(vehicles) {
+    var escapeChars = function(input) {
+      return ('' + input).replace(/([!|\.|~|-]){1}/g, '~$1');
+    };
+
+    var resultSet = [];
+    for(var i = 0; i < vehicles.length; i++) {
+      var singleListing = mapKeys(vehicles[i], VEHICLE_FIELDS);
+      var keyValues = [];
+      for (var name in singleListing) {
+          keyValues.push(name + '-' + escapeChars(singleListing[name]));
+      }
+      resultSet.push(keyValues.join('.'));
+    }
+    return resultSet.join('!');
+  };
+
+  // Takes data to map to query params using multiple mappings
+  // Usage: mapToHttp(data,mapping1,mapping2,...)
+  var mapToHttp = function (data) {
+    var mappings = Array.prototype.slice.call(arguments,1);
+    var mapping = merge.apply(null,mappings);
+
+    // encode subvehicle data if included
+    var dataToMap = data.vehicles ?
+      merge(data, { vehicles: encodeVehicles(data.vehicles) }) : data;
+
+    return mapKeys(dataToMap, mapping);
+  };
+
+  var getCalculatedEventParams = function() {
+    var getLastAttribution = function() {
+      try {
+        return window._pxa.getCookieValues();
+      } catch (err) {
+        return {};
+      }
+    };
+
+    return {
+        u: document.location.href,
+        rn: Math.floor(Math.random() * 99999999999),
+        a: getQueryString(getLastAttribution()) || undefined
+    };
+  };
+
+  var getPageLoadParams = function (data) {
+    var calculatedPageParams = { r: document.referrer, t: document.title };
+    var pageQueryParams = merge(
+      mapToHttp(data, PAGE_ATTRIBUTES, EVENT_FIELDS),
+      getCalculatedEventParams(),
+      calculatedPageParams
+    );
+    return pageQueryParams;
+  };
+
+  var getContentEventParams = function(data) {
+    var eventQueryParams = merge(
+      mapToHttp(data, PAGE_ATTRIBUTES, EVENT_DESCRIPTORS, EVENT_FIELDS),
+      getCalculatedEventParams()
+    );
+    return eventQueryParams;
+  };
+
+  function Pixall(options) {
+    options = options || {};
+    var self = this,
+      iFrameRenderer = options.iFrameRenderer || defaultiFrameRenderer,
+      scriptRenderer = options.scriptRenderer || defaultScriptRenderer,
+      poller = options.poller || defaultPoller,
+      imageRenderer = options.imageRenderer || defaultImageRenderer,
+      delayedPageLoad = options.delayedPageLoad || defaultDelayedPageLoad,
+      // meta data
+      dealerValues = null,
+      dealerValuesPath = null,
+      pageAttributes = {},
+      myCarsUserData = {},
+      myCarsVehicleData = {},
+      // other stateful vars
+      requestPaths = {},
+      pixallBus,
+      pageLoaded = false,
+      metadataReadyListeners = [],
+      dealerValuesQueue = [];
+
+    // local functions
+
+    /**
+     *  Trigger fires a dom event. This is so that BrightTag can listen for this dom event,
+     *   and conditionally fire tags based on the dom event and dealer values (eg. tag config for 'google.adwords.formConversion')
+     */
+    var trigger = function(eventName, data) {
+      var triggerEvent = function() {
+        var eventData = merge(pageAttributes, data, {
+          dealerValues: dealerValues
+        });
+        if (jQuery) {
+          jQuery(window).trigger(eventName, eventData);
+        }
+      };
+      // if we have a path for dealer values, and we have the dealer values - then execute, otherwise queue to execute when we do
+      if (!dealerValuesPath || dealerValues){
+        triggerEvent();
+      }
+      else{
+        dealerValuesQueue.push(triggerEvent);
+      }
+    };
+
+    // lister logic - only one event-lister implemented so far: 'metaDataReady'
+
+    var informListener = function(listener) {
+      try {
+        var pxaValues = {};
+        // try to extract pxa cookie values from external dep - but if that fails
+        // continue
+        try {
+          pxaValues = window._pxa.getCookieValues();
+        } catch (err) {}
+
+        var pageAttributesAndPxaValues = merge(pageAttributes, pxaValues);
+        listener(pageAttributesAndPxaValues);
+      } catch (err) {} // if a listener throws - we should continue unimpacted
+    };
+
+    var informListeners = function () {
+      for (var i = 0; i < metadataReadyListeners.length; i++) {
+        informListener(metadataReadyListeners[i]);
+      }
+    };
+
+    // other helpers
+
+    var pageLoadReady = function() {
+      return pageAttributes.dealerCode &&
+        pageAttributes.wspCode &&
+        pageAttributes.pageType;
+    };
+
+    var sendEvent = function(data) {
+      // build query string
+      var pageAttributesAndData = merge(pageAttributes, data);
+      var queryMap = getContentEventParams(pageAttributesAndData);
+      var queryString = getQueryString(queryMap);
+      // generate request
+      var paths = merge(requestPaths, getPathsAsV2(data));
+      var pixallUrl = paths.pixallEventPath + '?' + queryString;
+      imageRenderer(pixallUrl); // send hit to pixall server
+    };
+
+    // event type handler helpers
+
+    // this is for backwards compatibility for myCars. In general we shouldnt
+    // be saving vehicle state.
+    var saveMyCarsVehicle = function (data) {
+      myCarsVehicleData = filterKeys(data, VEHICLE_FIELDS);
+    };
+
+    var processMyCarsEvent = function(data, translations) {
+      var mergedMyCarsData = merge(myCarsUserData,data);
+      // update cached my cars user data
+      myCarsUserData = merge(myCarsUserData, {
+        userProfileId:  mergedMyCarsData.userProfileId,
+        universalUserId : mergedMyCarsData.universalUserId,
+        userType : mergedMyCarsData.userType
+      });
+      var myCarsDefaults = {
+        feature: 'mycars',
+        eventSource: 'userAccount',
+        userAccountId : mergedMyCarsData.userProfileId,
+        crossAccountId : mergedMyCarsData.universalUserId
+      };
+      var translationsWithDefaults = merge(myCarsDefaults,translations);
+      var translated = merge(mergedMyCarsData, translationsWithDefaults);
+      sendEvent(translated);
+    };
+
+    var processSlideEvent = function(data, type) {
+      var eventArgs = data.eventArgs || [];
+      var translated = merge(data, {
+        eventSource: 'SLIDE',
+        eventType: type,
+        contentId: eventArgs[0]
+      });
+      sendEvent(translated);
+    };
+
+    var eventTypeHandlers = {
+      'formSubmission': function (data) {
+        // translation
+        var translated = merge(data, {
+          eventSource: 'lead',
+          eventType: 'submit',
+          leadType: 'form',
+          leadContext: data.formType,
+        });
+        sendEvent(translated);
+        trigger('Pixall.formConversion', data);
+      },
+      'ajaxPageView': function (data) {
+        invokePhoneSwap();
+
+        // accept legacy page label as label for pageLoad
+        data.label = data.label || data.pageLabel;
+
+        // save vehicle fields for possible mycars use
+        saveMyCarsVehicle(data);
+
+        var translated = merge(data, {
+           eventType: 'ajaxPageView'
+         });
+
+        // update the current pagetype
+        pageAttributes.pageType = translated.pageType;
+
+        sendEvent(translated);
+        informListeners();
+        trigger('Pixall.pageView', data);
+      },
+      'ajaxContentUpdate': function () {
+        invokePhoneSwap();
+      },
+
+      'user.loaded' : function(data) {
+        var translations = { eventType: 'loaded' }
+        processMyCarsEvent(data,translations);
+      },
+      'user.registered' : function(data) {
+        data.userType = 'registered'; // hard coded
+        var translations = { eventType: 'sign-up' }
+        processMyCarsEvent(data,translations);
+      },
+      'vehicle.saved' : function(data){
+        var translations = {
+          eventSource: 'vehicle',
+          eventType: 'save',
+          priceAlerts : data.notificationsEnabled
+        }
+        var dataWithVehicleFields = merge(myCarsVehicleData,data);
+        processMyCarsEvent(dataWithVehicleFields, translations);
+      },
+      'slideView' : function(data) {
+        processSlideEvent(data, 'SLIDE_VIEW');
+      },
+      'slideClick' : function(data) {
+        processSlideEvent(data, 'SLIDE_CLICK');
+      },
+      'genericEvent' : function(data) {
+        // generic signature expects eventSource, eventType, and Fields
+        // translate contentType for legacy reasons
+        data.eventSource = data.eventSource || data.contentType;
+        sendEvent(data);
+      }
+    };
+
+    var pixallTypeHandlers = {
+      'event': function (data) {
+        if (eventTypeHandlers[data.eventType]) {
+          eventTypeHandlers[data.eventType](data);
+        } else if (data.eventType) {
+          eventTypeHandlers.genericEvent(data)
+        }
+      },
+      'event-listener': function (data) {
+        if (data.eventType === 'metaDataReady') {
+          metadataReadyListeners.push(data.listener);
+          if (pageLoaded) {
+            informListener(data.listener);
+          }
+        }
+      },
+      'meta-data': function (data) {
+        if (!pageLoaded) {
+          // IOT not copy empty strings over init values, delete empty strings
+          if (!data.dealerCode){
+            delete data.dealerCode;
+          }
+          if (!data.wspCode){
+            delete data.wspCode;
+          }
+          if (!data.pageType){
+            delete data.pageType;
+          }
+
+          // update paths (ensuring v2 api) and page attributes
+          requestPaths = merge(requestPaths, getPathsAsV2(data));
+          pageAttributes = merge(pageAttributes, filterKeys(data,PAGE_ATTRIBUTES));
+
+          if (pageLoadReady()) {
+
+              // update vehicle fields for possible mycars use
+              myCarsVehicleData = merge(myCarsVehicleData, filterKeys(data, VEHICLE_FIELDS));
+
+              var pageAttributesAndData = merge(pageAttributes, data);
+              sendPageLoad(pageAttributesAndData);
+          }
+        }
+      },
+      // this is the 'type' that is used to push additional dealer mapping values, for example, adProvider
+      'dealerValues' : function(data){
+        dealerValues = data;
+        // need to catch up on events that may have been backed up in the queue
+        while(dealerValuesQueue.length > 0){
+          dealerValuesQueue.shift()();
+        }
+      }
+    };
+
+    var eventProcessor = function() {
+      var requeue = [];
+      var startLength = pixallBus.length;
+      while (pixallBus.length > 0) {
+        var data = pixallBus.shift();
+        // always process meta-data
+        if (data && data.type == 'meta-data') {
+          data = pixallTypeHandlers[data.type](data);
+        }
+        // only process other events if we know how and page has loaded
+        else if (data && pixallTypeHandlers[data.type] && pageLoaded) {
+          data = pixallTypeHandlers[data.type](data);
+        }
+
+        if (data) {
+          requeue.push(data);
+        }
+      }
+
+      while (requeue.length > 0) {
+        var dataToQueue = requeue.shift();
+        if (dataToQueue) {
+          // using prototype for push because we have hijacked push to call
+          // eventprocessor and it would create a recursive loop
+          Array.prototype.push.call(pixallBus, dataToQueue);
+        }
+      }
+
+      // if an event has been processed
+      if (pixallBus.length != startLength) {
+        eventProcessor();
+      }
+    };
+
+    var sendPageLoad = function (data) {
+
+      // accept legacy page label as label for pageLoad
+      data.label = data.label || data.pageLabel;
+
+      var queryString = getQueryString(getPageLoadParams(data));
+
+      if (requestPaths.trtPageLoadPath) {
+        var trtPageLoadUrl = requestPaths.trtPageLoadPath + '?' + queryString;
+        iFrameRenderer(trtPageLoadUrl);
+      }
+
+      var pixallPageLoadUrl = requestPaths.pixallPageLoadPath + '?' + queryString;
+      imageRenderer(pixallPageLoadUrl);
+
+      informListeners();
+
+      pageLoaded = true;
+
+      // another round through events in case some depended on page ready
+      eventProcessor();
+
+      trigger('Pixall.pageView', data);
+
+      // if we have a path for dealer values, then drop a script so we can load those values
+      if (data.dealerCode !== UNKNOWN_META_DATA.dealerCode && dealerValuesPath){
+
+        // drop the script so we can load the dealer values
+        var renderedDealerValuesPath = dealerValuesPath
+          .replace('{dealerCode}', data.dealerCode)
+          .replace('{cacheBusting}', encodeURIComponent(new Date().toLocaleDateString().replace(/\//g, '-')));
+        scriptRenderer(renderedDealerValuesPath);
+      }
+
+      // request cookie match offline attribution iframe if user is not already
+      if (requestPaths.attributioniFramePath && !getCookie('pxa_at')) {
+        setCookie('pxa_at', 'true', dateForDaysInFuture(30), '/', null, false);
+        var attributioniFrameUrl = requestPaths.attributioniFramePath + '?v=' + pageAttributes.visitorId;
+        iFrameRenderer(attributioniFrameUrl);
+      }
+    };
+
+    self.init = function (props) {
+      props = props || {};
+      window._pxam = window._pxam || [];
+      pixallBus = window._pxam;
+
+      // calculate visitor id
+      props.visitorId = getVisitorId();
+
+      // save path and page and vehicle state
+      requestPaths = merge(PATH_ATTRIBUTES, getPathsAsV2(props));
+      pageAttributes = merge(DEFAULT_PAGE_ATTRIBUTES, filterKeys(props, PAGE_ATTRIBUTES));
+      saveMyCarsVehicle(props);
+
+      // dealer values path
+      dealerValuesPath = props.dealerValuesPath;
+
+      pixallBus.push = function () {
+        Array.prototype.push.apply(pixallBus, arguments);
+        eventProcessor();
+      };
+
+      eventProcessor();
+
+      if (!pageLoaded && pageLoadReady()) {
+        // then send the init page load
+        sendPageLoad(props);
+
+      } else if (!pageLoaded) {
+        delayedPageLoad(function () {
+          if (!pageLoaded) {
+            // update pageAttributes with unknowns
+            var pageLoadData = merge(UNKNOWN_META_DATA, pageAttributes, props);
+            sendPageLoad(pageLoadData); // send incomplete data
+          }
+        }, options.pageLoadDelayInMilliseconds);
+      }
+
+      poller(function () {
+        if (window._pxam !== pixallBus) {
+          window._pxam = window._pxam || [];
+          for (var i = 0; i < window._pxam.length; i++) {
+            pixallBus.push(window._pxam[i]);
+          }
+          window._pxam = pixallBus;
+        }
+      });
+
+      // prevent init from being called again
+      self.init = function () {};
+
+      self.dispose = function(){
+        // remove our handle on the pixall bus by getting a copy without our push monkey-patch
+        try{
+          window._pxam = window._pxam.slice(0);
+        }
+        catch(e){}
+      };
+    };
+  }
+  window.Pixall = Pixall;
+}(window.jQuery));

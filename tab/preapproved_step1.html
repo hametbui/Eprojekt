@@ -1,0 +1,52 @@
+<div class="container">
+    <form action="" id="form" name="form">
+
+        <h3>YOUR INFORMATION</h3>
+       
+        <div class="form-group">
+            <input type="text" id="fname" name="fname" required placeholder="First name*"
+                class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="text" id="lname" name="lname" required placeholder="Last name*"
+                class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="email" id="email" name="email" required placeholder="Email*" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="text" id="phone" name="phone" required placeholder="Phone*" class="form-control">
+        </div>
+       
+        
+        <div id="re">
+            <input type="submit" value="Register">
+          
+        </div>
+    </form>
+</div>
+</section>
+
+
+<script>
+document.getElementById("form").onsubmit = function () {
+   
+    let r = /([a-z0-9_]+)@([a-z0-9]+)\.([a-z]{2,4})+/;
+    let email = document.getElementById("email").value.trim().toLowerCase();
+    if (r.test(email) == false) {
+        alert("Email Invail !!!");
+        document.getElementById("email").focus();
+        return false;
+    }
+    let a = /([0-9]+)/;
+    let phone = document.getElementById("phone").value.trim().toLowerCase();
+    if (a.test(phone) == false) {
+        alert("Phone Number must be digit !!!");
+        document.getElementById("phone").focus();
+        return false;
+    }
+    alert("Next step")
+
+}
+</script>
+</div>

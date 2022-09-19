@@ -1,0 +1,2 @@
+
+Bootstrapper._serverTime = '2022-09-04 18:06:43'; Bootstrapper._clientIP = '104.126.37.47'; Bootstrapper.insertPageFiles(['https://tms.audi.com/audi/globalbrandportal/code/017b43ea62068759a0c52faf2bc7a1b3.js?conditionId0=639050']);Bootstrapper.setPageSpecificDataDefinitionIds([63745,59992,53736,53738]);
